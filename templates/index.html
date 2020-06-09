@@ -50,7 +50,7 @@
     <script>
 
 
-            $(document).ready(function () {
+        $(document).ready(function () {
             $('#orders-box').html('');
             fx_show(); // fx 보여주기
             listing();
@@ -81,6 +81,9 @@
 
                         alert('주문이 완료되었습니다! 감사해요^_^');
                         window.location.reload();
+                    }
+                    else{
+                        alert('데이터를 받아오지 못했습니다+_+')
                     }
                 }
             });
@@ -117,7 +120,7 @@
 
                     else {
 
-                        alert('리뷰를 받아오지 못했습니다');
+                        alert('데이터를 받아오지 못했습니다+_+');
                     }
                 }
             });
