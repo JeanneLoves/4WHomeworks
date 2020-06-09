@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스파르타코딩클럽 8기 2주차 과제 by JEANNE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- For ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+
+    <style>
+        * {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 14px;
+        }
+
+        .wrap {
+            text-align: center;
+            width: 900px;
+            margin: auto;
+            padding: 50px;
+        }
+
+        #post-box {
+            width: 500px;
+            margin: 20px auto;
+            padding: 50px;
+            border-radius: 5px;
+        }
+
+        body {
+            padding-top: 49px;
+        }
+    </style>
+
+    <script>
+
+
+            $(document).ready(function () {
+            $('#orders-box').html('');
+            fx_show(); // fx 보여주기
+            listing();
+        });
+
+        function make_order() {
+
+            var customer_name = $('#customer_name').val();
+            var customer_quantity = $('#customer_quantity').val();
+            var customer_address = $('#customer_address').val();
+            var customer_phone = $('#customer_phone').val();
+
+            console.log(customer_name, customer_quantity, customer_address, customer_phone);
+
+
+            $.ajax({
+                type: 'POST', // 타입을 작성합니다.
+                url: '/orders', // url을 작성합니다.
+                data: {
+                    name_give: customer_name,
+                    quantity_give: customer_quantity,
+                    address_give: customer_address,
+                    phone_give: customer_phone
+
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+
+                        alert('주문이 완료되었습니다! 감사해요^_^');
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
+        function listing() {
+
+            $.ajax({
+                type: "GET",
+                url: "/orders",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+
+                        var orders = response['orders'];
+
+                        for (i = 0; i < orders.length; i++) {
+
+                            console.log(orders[i]);
+
+                            var temp_html = `
+                             <tr>
+                                    <td>${orders[i].name}</td>
+                                    <td>${orders[i].quantity}</td>
+                                    <td>${orders[i].address}</td>
+                                    <td>${orders[i].phone}</td>
+                                </tr>
+                                `;
+
+                            $('#orders-box').append(temp_html);
+
+                        }
+                    }
+
+                    else {
+
+                        alert('리뷰를 받아오지 못했습니다');
+                    }
+                }
+            });
+        }
+
+
+        function fx_show() {
+
+            $.ajax({
+
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+
+                    for (let i = 0; i < response.length; i++) {
+                        var rows = response[i]
+                        var fx_name = rows.name.split('=')[0];
+                        var fx_rate = rows.rate.toFixed(2);
+
+                        $('#fx_reader').append('<li>' + fx_name + ':' + fx_rate + '</li>');
+
+                    }
+                }
+            })
+        }
+
+        function thankyou() {
+
+            var customer_name = $('#customer_name').val();
+            var customer_quantity = $('#customer_quantity').val();
+            var customer_address = $('#customer_address').val();
+            var customer_phone = $('#customer_phone').val();
+
+            if (customer_name == "") {
+                alert('이름을 입력해주세요');
+            }
+            else if (customer_quantity == 0) {
+                alert('수량을 입력해주세요')
+            }
+            else if (customer_address == "") {
+                alert('주소를 입력해주세요')
+            }
+            else if (customer_phone == "") {
+                alert('전화번호를 입력해주세요')
+            }
+            else {
+                make_order();
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">JEANNE</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="http://www.naver.com">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="https://smartstore.naver.com/shop_pbwy/products/4903760116?site_preference=device&NaPm=ct%3Dkaaqxkq0%7Cci%3Dshopn%7Ctr%3Dppc_myz%7Chk%3D1826bd69cabb88a4a22083c7e22486009259d77a">Product</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" onclick="alert('Not Available YET!')">N/A</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+    <main role="main" class="container">
+
+        <div class="wrap">
+
+            <img src="https://66.media.tumblr.com/6088c406b779a7e4d67309cdc8d15e5f/05d3d28791cafea0-1f/s540x810/7b3b584c3e86f6ac7e7b75ea77db1da23c649aba.jpg"
+                class="img-responsive" alt="Responsive image" />
+        </div>
+        <div class="text-center">
+            <h1>[피스 비 위드 유] Masking Tape<small><small><small> 가격:4,500원/개</small></small></small></h1>
+            <p class="lead">나의 목자 나의 예수님, 길 잃은 양 한 마리도 소중히 여겨주시는 예수님의 다정함<br>예쁘지요? 다양하게 활용이 가능해요 (크기:15mm X 10m, 소재: 화지)
+            </p>
+            <br>
+
+
+            <p id="fx_reader" style="text-align:left ; color:blueviolet"></p>
+
+        </div>
+        <div class="jumbotron">
+            <div class="form-post" id="post-box">
+                <!-- <div> -->
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">주문자명</label>
+                    <input class="form-control" id="customer_name" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">수량</label>
+                    <select class="form-control" id="customer_quantity">
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea2">주소</label>
+                    <textarea class="form-control" id="customer_address" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea3">전화번호</label>
+                    <input class="form-control" id="customer_phone" placeholder=""></txtarea>
+                    <small id="HelpBlock" class="form-text text-muted">
+                        * All rights reserved @shop_pbwy
+                    </small>
+                </div>
+                <p><button onclick="thankyou()" class="btn btn-primary">주문하기</button></p>
+                <!-- </div> -->
+            </div>
+        </div>
+        <div class="order">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">주문자명</th>
+                        <th scope="col">수량</th>
+                        <th scope="col">주소</th>
+                        <th scope="col">전화번호</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-box">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+
+</body>
+
+</html>
