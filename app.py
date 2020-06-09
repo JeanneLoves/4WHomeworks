@@ -13,18 +13,17 @@ def home():
 ## API 역할을 하는 부분
 @app.route('/orders', methods=['POST'])
 def write_orders():
-    print(request.form)
-    name = request.form['name_give']
-    quantity = request.form['quantity_give']
-    address = request.form['address_give']
-    phone = request.form['phone_give']
-    print(name, quantity, address, phone)
-
+    
+    name_recieve = request.form['name_give']
+    quantity_recieve = request.form['quantity_give']
+    address_recieve = request.form['address_give']
+    phone_recieve = request.form['phone_give']
+   
     db.orders.insert_one({
-        'name': name,
-        'quantity':quantity,
-        'address':address,
-        'phone':phone
+        'name': name_recieve,
+        'quantity': quantity_recieve,
+        'address': address_recieve,
+        'phone': phone_recieve
     })
     return jsonify({'result':'success', 'msg': '이 요청은 POST!'})
 
@@ -32,7 +31,7 @@ def write_orders():
 @app.route('/orders', methods=['GET'])
 def read_orders():
     data = list(db.orders.find({}, {'_id':False}))
-    return jsonify({'result':'success', 'msg': '이 요청은 GET!', 'reviews': data})
+    return jsonify({'result':'success', 'msg': '이 요청은 GET!', 'orders': data})
 
 
 
